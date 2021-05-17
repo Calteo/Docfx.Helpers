@@ -80,7 +80,7 @@ namespace Docfx.Create.Toc
             if (index != null)
             {
                 toc.Items.Insert(0, index);
-                toc.Title = index.Title;
+                toc.Title = index.TocTitle ?? index.Title;
                 toc.Order = index.Order;                
             }
 

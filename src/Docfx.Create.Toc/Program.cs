@@ -48,6 +48,8 @@ namespace Docfx.Create.Toc
 
             rootToc.WriteToc();
 
+            Console.WriteLine($"scan completed '{folder}'");
+
             return 0;
         }
     }

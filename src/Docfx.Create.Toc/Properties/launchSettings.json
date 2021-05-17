@@ -2,7 +2,7 @@
   "profiles": {
     "Docfx.Create.Toc": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\..\\..\\..\\Wiki"
+      "commandLineArgs": "D:\\Projekte\\GitHub\\spacex-rus-wiki\\wiki"
     }
   }
 }

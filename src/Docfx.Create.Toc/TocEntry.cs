@@ -6,9 +6,17 @@ namespace Docfx.Create.Toc
 {
     public class TocEntry : TocItem
     {
-        public bool IsIndex => Name == "index.md";        
+        public bool IsIndex => Name == "index.md";     
+
+        [YamlHeader("uid")]
         public string Uid { get; private set; }
+        
+        [YamlHeader("toc.parent")]
         public string Parent { get; private set; }
+
+        [YamlHeader("toc.title")]
+        public string TocTitle { get; private set; }
+
         public TocFolder Linked { get; set; }
 
         private static Regex KeyValuePattern { get; } = new Regex(@"^\s*(?<key>[^:]+)\s*:\s*(?<value>.+?)\s*$", RegexOptions.Compiled);
@@ -16,7 +24,9 @@ namespace Docfx.Create.Toc
         static public TocEntry Scan(FileInfo file)
         {
             var toc = new TocEntry { Name = file.Name };
-            
+
+            var headers = toc.GetHeaders();
+
             using (var stream = file.OpenText())
             {
                 var line = stream.ReadLine();
@@ -30,21 +40,13 @@ namespace Docfx.Create.Toc
                         {
                             var key = match.Groups["key"].Value;
                             var value = match.Groups["value"].Value;
-                            switch (key)
+                            if (headers.TryGetValue(key, out var property))
                             {
-                                case "title":
-                                    toc.Title = value;
-                                    break;
-                                case "uid":
-                                    toc.Uid = value;
-                                    break;
-                                case "toc.parent":
-                                    toc.Parent = value;
-                                    break;
-                                case "toc.order":
-                                    if (int.TryParse(value, out var index))
-                                        toc.Order = index;
-                                    break;
+                                property.SetValue(toc, Convert.ChangeType(value, property.PropertyType));
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{file.FullName}: unparsed header: {key}");
                             }
                         }
                     }
@@ -73,7 +75,10 @@ namespace Docfx.Create.Toc
                 writer.WriteLine($"  href: {Name}");
 
                 if (Items.Count > 0)
+                {
+                    writer.Write(new string(' ', indent));
                     writer.WriteLine($"  items:");
+                }
 
                 foreach (var item in Items)
                 {
