@@ -5,11 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Docfx.Create.Toc
+namespace Docfx.Core
 {
     [DebuggerDisplay("{Name,nq} - {Title}")]
     public class TocItem
     {
+        public TocItem(Action<string> report)
+        {
+            Report = report;
+        }
+
+        protected Action<string> Report { get; }
+
         public string Name { get; set; }
         [YamlHeader("title")]
         public string Title { get; set; }
@@ -17,6 +24,7 @@ namespace Docfx.Create.Toc
         public int Order { get; set; }
 
         public List<TocItem> Items { get; set; } = new List<TocItem>();
+
 
         public Dictionary<string, PropertyInfo> GetHeaders()
         {

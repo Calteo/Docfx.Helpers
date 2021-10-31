@@ -3,19 +3,45 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Docfx.Create.Toc
+namespace Docfx.Core
 {
     public class TocFolder : TocItem
-    {                
-        public DirectoryInfo Folder { get; private set; }
+    {
+        public static int Create(string folder, Action<string> report)
+        {
+            report($"scan folder '{folder}'");
 
-        public static TocFolder Scan(DirectoryInfo directory)
+            if (!File.Exists(Path.Combine(folder, "docfx.json")))
+            {
+                report($"no docfx project found.");
+                return -2;
+            }
+
+            var rootToc = Scan(new DirectoryInfo(folder), report);
+            var index = rootToc.Items.OfType<TocEntry>().FirstOrDefault();
+            if (index?.IsIndex ?? false)
+            {
+                rootToc.Items.Remove(index);
+            }
+
+            rootToc.WriteToc();
+
+            report($"scan completed '{folder}'");
+
+            return 0;
+        }
+
+        private static TocFolder Scan(DirectoryInfo directory, Action<string> report)
         {
             var files = directory.GetFiles("*.md").ToList();
             if (files.Count == 0) return null;
 
-            var toc = new TocFolder { Folder = directory, Name = directory.Name };
-            var entries = files.Select(f => TocEntry.Scan(f)).ToList();
+            var toc = new TocFolder(report)
+            { 
+                Folder = directory, 
+                Name = directory.Name 
+            };
+            var entries = files.Select(f => TocEntry.Scan(f, report)).ToList();
             var index = entries.FirstOrDefault(e => e.IsIndex);
 
             var children = entries.Where(e => e.Parent != null);
@@ -41,19 +67,19 @@ namespace Docfx.Create.Toc
                 }
                 if (start == childsByParent.Count)
                 {
-                    Console.WriteLine($"parents not found '{directory.FullName}'");
+                    report($"parents not found '{directory.FullName}'");
                     foreach (var childGroup in childsByParent)
                     {
-                        Console.WriteLine($"{childGroup.Key}:");
+                        report($"{childGroup.Key}:");
                         foreach (var child in childGroup.Value)
                         {
-                            Console.WriteLine($"- {child.Name}:");
+                            report($"- {child.Name}:");
                         }
                     }
                 }
             }
 
-            var directoryItems = directory.GetDirectories().Select(d => Scan(d)).Where(d => d != null).ToList();
+            var directoryItems = directory.GetDirectories().Select(d => Scan(d, report)).Where(d => d != null).ToList();
             var entryNames = entries.ToDictionary(e => e.Name);
 
             foreach (var directoryItem in directoryItems.ToArray())
@@ -62,7 +88,7 @@ namespace Docfx.Create.Toc
                 {
                     if (entry.Items.Count == 0)
                     {
-                        Console.WriteLine($"manual child will be ignored by folder content '{entry.Name}'");
+                        report($"manual child will be ignored by folder content '{entry.Name}'");
                     }
                     entry.Linked = directoryItem;
                     directoryItems.Remove(directoryItem);
@@ -87,10 +113,17 @@ namespace Docfx.Create.Toc
             return toc;
         }
 
+        public TocFolder(Action<string> report)
+            : base(report)
+        {
+        }
+
+        public DirectoryInfo Folder { get; private set; }
+
         public void WriteToc()
         {
             var filename = Path.Combine(Folder.FullName, "toc.yml");
-            Console.WriteLine($"write '{filename}'");
+            Report($"write '{filename}'");
 
             using (var writer = new StreamWriter(filename, false, new UTF8Encoding(false)))
             {

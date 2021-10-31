@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Docfx.Core;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
@@ -100,10 +101,12 @@ namespace Docfx.Watcher
                     DocfxSite = siteMatch.Groups["site"].Value;
                     ShowSite();
                     buttonShow.Enabled = true;
-                    buttonBuild.Enabled = true;                    
+                    buttonBuild.Enabled = true;
+                    buttonCreateToc.Enabled = true;
+
+                    Changes = 0;
+                    timerWatcher.Enabled = true;
                 }
-                Changes = 0;
-                timerWatcher.Enabled = true;
             }
         }
 
@@ -125,6 +128,7 @@ namespace Docfx.Watcher
             {
                 Docfx.StandardInput.WriteLine("");               
             }
+            buttonCreateToc.Enabled = true;
             Docfx = null;
         }
 
@@ -150,7 +154,8 @@ namespace Docfx.Watcher
             Docfx.OutputDataReceived += DocfxOutputDataReceived;
             Docfx.ErrorDataReceived += DocfxErrorDataReceived;
             Docfx.Exited += DocfxExited;
-            
+
+            buttonCreateToc.Enabled = false;
 
             var rc = Docfx.Start();
             if (rc)
@@ -163,6 +168,7 @@ namespace Docfx.Watcher
             {
                 AppendLog("docfx not started");
                 Docfx = null;
+                buttonCreateToc.Enabled = true;
             }
         }
 
@@ -194,10 +200,7 @@ namespace Docfx.Watcher
 
         private void WatcherFormShown(object sender, EventArgs e)
         {
-            if (Options.Folder != null)
-            {
-                StartWatching(Options.Folder);
-            }
+            StartWatching(Options.Folder ?? Environment.CurrentDirectory);
         }
 
         private void ButtonBuildClick(object sender, EventArgs e)
@@ -253,6 +256,15 @@ namespace Docfx.Watcher
                 timerWatcher.Enabled = false;
                 StartDocfx();
             }
+        }
+
+        private void ButtonCreateTocClick(object sender, EventArgs e)
+        {
+            timerWatcher.Enabled = false;
+
+            var rc = TocFolder.Create(Folder, s => Invoke(LogInvoker, $"createToc: {s}"));
+
+            timerWatcher.Enabled = true;
         }
     }
 }

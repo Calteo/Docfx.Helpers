@@ -4,7 +4,7 @@ namespace Docfx.Watcher
 {
     class WatcherOptions
     {
-        [Option("f"), Position(0)]       
+        [Option("folder"), Position(0)]       
         public string Folder { get; set; }
     }
 }

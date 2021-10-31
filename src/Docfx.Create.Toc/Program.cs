@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using Toolbox.CommandLine;
+using Docfx.Core;
 
 namespace Docfx.Create.Toc
 {
@@ -31,26 +32,7 @@ namespace Docfx.Create.Toc
         {
             var folder = Path.GetFullPath(options.Folder ?? Environment.CurrentDirectory);
 
-            Console.WriteLine($"scan folder '{folder}'");
-
-            if (!File.Exists(Path.Combine(folder, "docfx.json")))
-            {
-                Console.WriteLine($"no docfx project found.");
-                return -2;
-            }
-
-            var rootToc = TocFolder.Scan(new DirectoryInfo(folder));
-            var index = rootToc.Items.OfType<TocEntry>().FirstOrDefault();
-            if (index?.IsIndex ?? false)
-            {
-                rootToc.Items.Remove(index);
-            }
-
-            rootToc.WriteToc();
-
-            Console.WriteLine($"scan completed '{folder}'");
-
-            return 0;
+            return TocFolder.Create(folder, Console.WriteLine);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Docfx.Create.Toc
+namespace Docfx.Core
 {
     [System.AttributeUsage(AttributeTargets.Property)]
     sealed class YamlHeaderAttribute : Attribute

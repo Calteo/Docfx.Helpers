@@ -16,4 +16,8 @@
     <PackageReference Include="Toolbox.CommandLine" Version="1.0.31" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Docfx.Core\Docfx.Core.csproj" />
+  </ItemGroup>
+
 </Project>

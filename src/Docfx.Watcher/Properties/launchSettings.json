@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Docfx.Create.Toc": {
+    "Docfx.Watcher": {
       "commandName": "Project",
       "commandLineArgs": "D:\\Projekte\\GitHub\\Calteo\\rocketX-wiki\\wiki"
     }

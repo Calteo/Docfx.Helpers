@@ -38,21 +38,24 @@ namespace Docfx.Watcher
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.fileSystemWatcher = new System.IO.FileSystemWatcher();
             this.timerWatcher = new System.Windows.Forms.Timer(this.components);
+            this.buttonCreateToc = new System.Windows.Forms.Button();
             this.layoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher)).BeginInit();
             this.SuspendLayout();
             // 
             // layoutPanel
             // 
-            this.layoutPanel.ColumnCount = 4;
+            this.layoutPanel.ColumnCount = 5;
+            this.layoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
             this.layoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
             this.layoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
             this.layoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
             this.layoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.layoutPanel.Controls.Add(this.buttonOpen, 0, 0);
             this.layoutPanel.Controls.Add(this.textBoxLog, 0, 1);
-            this.layoutPanel.Controls.Add(this.buttonBuild, 1, 0);
-            this.layoutPanel.Controls.Add(this.buttonShow, 2, 0);
+            this.layoutPanel.Controls.Add(this.buttonBuild, 2, 0);
+            this.layoutPanel.Controls.Add(this.buttonShow, 3, 0);
+            this.layoutPanel.Controls.Add(this.buttonCreateToc, 1, 0);
             this.layoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutPanel.Location = new System.Drawing.Point(0, 0);
             this.layoutPanel.Name = "layoutPanel";
@@ -75,7 +78,7 @@ namespace Docfx.Watcher
             // 
             // textBoxLog
             // 
-            this.layoutPanel.SetColumnSpan(this.textBoxLog, 4);
+            this.layoutPanel.SetColumnSpan(this.textBoxLog, 5);
             this.textBoxLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxLog.Location = new System.Drawing.Point(3, 37);
             this.textBoxLog.MaxLength = 300000;
@@ -91,7 +94,7 @@ namespace Docfx.Watcher
             // 
             this.buttonBuild.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonBuild.Enabled = false;
-            this.buttonBuild.Location = new System.Drawing.Point(163, 3);
+            this.buttonBuild.Location = new System.Drawing.Point(323, 3);
             this.buttonBuild.Name = "buttonBuild";
             this.buttonBuild.Size = new System.Drawing.Size(154, 28);
             this.buttonBuild.TabIndex = 2;
@@ -103,7 +106,7 @@ namespace Docfx.Watcher
             // 
             this.buttonShow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonShow.Enabled = false;
-            this.buttonShow.Location = new System.Drawing.Point(323, 3);
+            this.buttonShow.Location = new System.Drawing.Point(483, 3);
             this.buttonShow.Name = "buttonShow";
             this.buttonShow.Size = new System.Drawing.Size(154, 28);
             this.buttonShow.TabIndex = 3;
@@ -131,6 +134,17 @@ namespace Docfx.Watcher
             // 
             this.timerWatcher.Interval = 1000;
             this.timerWatcher.Tick += new System.EventHandler(this.TimerWatcherTick);
+            // 
+            // buttonCreateToc
+            // 
+            this.buttonCreateToc.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonCreateToc.Location = new System.Drawing.Point(163, 3);
+            this.buttonCreateToc.Name = "buttonCreateToc";
+            this.buttonCreateToc.Size = new System.Drawing.Size(154, 28);
+            this.buttonCreateToc.TabIndex = 4;
+            this.buttonCreateToc.Text = "&CreateToc";
+            this.buttonCreateToc.UseVisualStyleBackColor = true;
+            this.buttonCreateToc.Click += new System.EventHandler(this.ButtonCreateTocClick);
             // 
             // WatcherForm
             // 
@@ -160,6 +174,7 @@ namespace Docfx.Watcher
         private System.Windows.Forms.Button buttonBuild;
         private System.Windows.Forms.Button buttonShow;
         private System.Windows.Forms.Timer timerWatcher;
+        private System.Windows.Forms.Button buttonCreateToc;
     }
 }
 

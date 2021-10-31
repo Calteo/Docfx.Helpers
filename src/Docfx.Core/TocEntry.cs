@@ -2,10 +2,16 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Docfx.Create.Toc
+namespace Docfx.Core
 {
     public class TocEntry : TocItem
     {
+        public TocEntry(Action<string> report)
+            : base(report)
+        {
+
+        }
+
         public bool IsIndex => Name == "index.md";     
 
         [YamlHeader("uid")]
@@ -21,9 +27,9 @@ namespace Docfx.Create.Toc
 
         private static Regex KeyValuePattern { get; } = new Regex(@"^\s*(?<key>[^:]+)\s*:\s*(?<value>.+?)\s*$", RegexOptions.Compiled);
 
-        static public TocEntry Scan(FileInfo file)
+        static public TocEntry Scan(FileInfo file, Action<string> report)
         {
-            var toc = new TocEntry { Name = file.Name };
+            var toc = new TocEntry(report) { Name = file.Name };
 
             var headers = toc.GetHeaders();
 
@@ -46,7 +52,7 @@ namespace Docfx.Create.Toc
                             }
                             else
                             {
-                                Console.WriteLine($"{file.FullName}: unparsed header: {key}");
+                                report($"{file.FullName}: unparsed header: {key}");
                             }
                         }
                     }
